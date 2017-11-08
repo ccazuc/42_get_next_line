@@ -6,7 +6,7 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:17:41 by ccazuc            #+#    #+#             */
-/*   Updated: 2017/11/08 12:24:00 by ccazuc           ###   ########.fr       */
+/*   Updated: 2017/11/08 13:29:52 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static char	*build_line(t_env *env)
 	//printf("Build line start\n");
 	env->curr_line = 0;
 	//printf("line: %d, env->datas: %s\n", env->line, env->datas);
-	printf("Line: %d\n", env->line);
+	//printf("Line: %d\n", env->line);
 	while (env->datas[++i])
 		if (env->datas[i] == '\n')
 		{
@@ -35,6 +35,7 @@ static char	*build_line(t_env *env)
 				break;
 			}
 		}
+	//printf("END BUILD, buff_pos: %d, buff_len: %d\n", env->buff_pos, env->buff_len);
 	//printf("Start str_sub\n");
 	//printf("env->start: %d, env->end: %d, env->line: %d\n", env->start, env->end, env->line);
 	//printf("%s\n", ft_strsub_start(env->datas, env->start));
@@ -43,6 +44,9 @@ static char	*build_line(t_env *env)
 	//printf("Second sub done\n");
 	//printf("%s\n", ft_strsub(env->datas, env->start, env->end));
 	//printf("Third sub done\n");
+	if (env->curr_line <= env->line)
+		return (NULL);
+	env->buff_pos = i + 1;
 	if (env->end == -1)
 		return (ft_strsub_start(env->datas, env->start));
 	if (env->start == -1)
@@ -78,23 +82,35 @@ static int	add_datas(char *datas, t_env *env)
 static char	*get_n_line(t_env *env)
 {
 	int		datas_read;
-	char	buffer[BUFF_SIZE];
+	char	buffer[BUFF_SIZE + 1];
 	int		returned_value;
+	char	*tmp;
 
 	env->curr_line = 0;
-	//printf("b\n");
+	//printf("buff_pos: %d, buff_len: %d\n", env->buff_pos, env->buff_len);
+	if (env->buff_pos < env->buff_len)
+	{
+		//printf("BUFF CONDITION\n");
+		if ((tmp = build_line(env)))
+			return (tmp);
+	}
 	while ((datas_read = read(env->fd, buffer, BUFF_SIZE)) > 0)
 	{
+	//	printf("BUFF READ\n");
 		buffer[datas_read] = '\0';
+		env->buff_len += datas_read;
 		//printf("data_read: '%s', line: %d\n", buffer, env->line);
 		//printf("c\n");
 		returned_value = add_datas(buffer, env);
-		printf("Returned value: %d\n", returned_value);
+		//printf("Returned value: %d\n", returned_value);
 		//printf("d\n");
 		if (returned_value == -1)
 			return (NULL);
 		if (returned_value == 1)
+		{
+			//printf("build_line: %s, line: %d\n", build_line(env), env->line);
 			return (build_line(env));
+		}
 	}
 	return (NULL);
 }
@@ -109,13 +125,14 @@ int			get_next_line(const int fd, char **line)
 		if (!(env = malloc(sizeof(*env))))
 			return (-1);
 		env->datas = malloc(1);
+		env->buff_len = 0;
+		env->buff_pos = 0;
 	}
 	++s_line;
 	env->fd = fd;
 	env->line = s_line;
 	env->start = -1;
 	env->end = -1;
-	//printf("a\n");
 	if (!(*line = get_n_line(env)))
 		return (-1);
 	return (1);
@@ -126,9 +143,10 @@ int		main(void)
 	char	*line;
 	int		fd;
 
+	printf("before open\n");
 	fd = open("libft.h", O_RDONLY);
+	printf("open\n");
 	while (get_next_line(fd, &line) == 1)
 		printf("%s\n", line);
-		;
 	return (0);
 }

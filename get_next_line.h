@@ -6,14 +6,14 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:46:08 by ccazuc            #+#    #+#             */
-/*   Updated: 2017/11/08 12:23:19 by ccazuc           ###   ########.fr       */
+/*   Updated: 2017/11/08 13:31:09 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef GET_NEXT_LINE_H
 # define GET_NEXT_LINE_H
 
-# define BUFF_SIZE 150
+# define BUFF_SIZE 50000
 
 # include "libft.h"
 # include <unistd.h>
@@ -30,6 +30,8 @@ typedef struct 	s_env
 	int			fd;
 	int			line;
 	int			curr_line;
+	int			buff_pos;
+	int			buff_len;
 	
 }				t_env;
 
