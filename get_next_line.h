@@ -6,7 +6,7 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:46:08 by ccazuc            #+#    #+#             */
-/*   Updated: 2017/11/08 13:31:09 by ccazuc           ###   ########.fr       */
+/*   Updated: 2017/11/08 13:53:04 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ typedef struct 	s_env
 	int			curr_line;
 	int			buff_pos;
 	int			buff_len;
-	
 }				t_env;
 
 #endif

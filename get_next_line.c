@@ -1,98 +1,118 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   get_next_line2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/08 07:41:30 by ccazuc            #+#    #+#             */
-/*   Updated: 2017/11/08 09:08:24 by ccazuc           ###   ########.fr       */
+/*   Created: 2017/11/08 09:17:41 by ccazuc            #+#    #+#             */
+/*   Updated: 2017/11/08 13:56:25 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-static char	*find_next_line(t_list **list, int line)
-{
-	t_list	*tmp;
-	int		curr_line;
-	int		i;
-	int		should_add;
+#include "get_next_line.h"
+#include <stdio.h>
 
-	curr_line = 0;
-	tmp = *list;
-	while (tmp)
-	{
-		if (
-	}
-	while ()
-	while (list)
-	{
-		tmp = list->next;
-		free(list->data);
-		free(list);
-		list = tmp;
-	}
-	list = NULL;
-}
-
-static int	add_datas_list(char *datas, t_list **list, int *curr_line, t_env *env)
+static char		*build_line(t_env *env)
 {
-	t_list *new_list;
 	int		i;
 
-	if (!(new_list = malloc(sizeof(*new_list))))
-		return (-1);
-	new_list->next = NULL;
-	new_list->data = ft_strndup(datas, ft_strlen(datas));
-	new_list->nb_eol = 0;
-	new_list->last_eol = 0;
 	i = -1;
-	while (datas[++i])
-		if (datas[i] == '\n')
+	env->curr_line = 0;
+	while (env->datas[++i])
+		if (env->datas[i] == '\n')
 		{
-			new_list->nb_eol++;
-			*curr_line++;
-			if (*curr_line == env->line)
+			++env->curr_line;
+			if (env->curr_line == env->line)
+				env->start = i;
+			else if (env->curr_line == env->line + 1)
 			{
-				new_list->last_eol = 1;
-				return (1);
+				env->end = i;
+				break ;
 			}
 		}
+	if (env->curr_line <= env->line)
+		return (NULL);
+	env->buff_pos = i + 1;
+	if (env->end == -1)
+		return (ft_strsub_start(env->datas, env->start));
+	if (env->start == -1)
+		return (ft_strsub(env->datas, 0, env->end));
+	return (ft_strsub(env->datas, env->start + 1, env->end - env->start - 1));
 }
 
-static char	*get_n_line(const int fd, int line)
+static int		add_datas(char *datas, t_env *env)
 {
-	t_list	*list;
-	int		datas_read;
-	char	buffer[BUFFER_SIZE];
-	int		curr_line;
-	int		returned_value;
+	int		i;
 
-	curr_line = 0;
-	if (!(list = malloc(sizeof(*list))))
-		return (NULL);
-	while ((datas_read = read(fd, buffer, BUFFER_SIZE)) > 0)
+	if (!(env->datas = ft_strjoin_free1(env->datas, datas)))
+		return (-1);
+	i = -1;
+	env->curr_line = -1;
+	while (env->datas[++i])
+		if (env->datas[i] == '\n')
+		{
+			++env->curr_line;
+			if (env->curr_line == env->line)
+				return (1);
+		}
+	return (0);
+}
+
+static char		*get_n_line(t_env *env)
+{
+	int		datas_read;
+	char	buffer[BUFF_SIZE + 1];
+	int		returned_value;
+	char	*tmp;
+
+	env->curr_line = 0;
+	if (env->buff_pos < env->buff_len)
+		if ((tmp = build_line(env)))
+			return (tmp);
+	while ((datas_read = read(env->fd, buffer, BUFF_SIZE)) > 0)
 	{
 		buffer[datas_read] = '\0';
-		returned_value = add_datas_list(buffer, list, &curr_line);
+		env->buff_len += datas_read;
+		returned_value = add_datas(buffer, env);
 		if (returned_value == -1)
 			return (NULL);
-		if (curr_line == 1)
-			return (build_line(list);
+		if (returned_value == 1)
+			return (build_line(env));
 	}
+	return (NULL);
 }
 
-int			get_next_line(const int fd, char **line)
+int				get_next_line(const int fd, char **line)
 {
-	static int	line;
-	t_env		*env;
+	static t_env		*env;
 
-	if (!(env = malloc(*t_env)))
-		return (-1);
+	if (!env)
+	{
+		if (!(env = malloc(sizeof(*env))))
+			return (-1);
+		env->datas = malloc(1);
+		env->buff_len = 0;
+		env->buff_pos = 0;
+		env->line = -2;
+	}
+	++env->line;
 	env->fd = fd;
-	env->line = line;
-	line = -1;
-	++line;
-	if (!get_n_line(fd, line))
-		return (-1);	
-			
+	env->start = -1;
+	env->end = -1;
+	if (!(*line = get_n_line(env)))
+		return (-1);
+	return (1);
+}
+
+int				main(void)
+{
+	char	*line;
+	int		fd;
+
+	fd = open("get_next_line.c", O_RDONLY);
+	printf("return: %d\n", get_next_line(fd, &line));
+	while (get_next_line(fd, &line) == 1)
+		printf("%s\n", line);
+	return (0);
 }
