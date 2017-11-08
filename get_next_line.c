@@ -6,14 +6,14 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:17:41 by ccazuc            #+#    #+#             */
-/*   Updated: 2017/11/08 13:56:25 by ccazuc           ###   ########.fr       */
+/*   Updated: 2017/11/08 14:08:35 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "get_next_line.h"
 #include <stdio.h>
 
-static char		*build_line(t_env *env)
+static char		*build_line(t_gnl *env)
 {
 	int		i;
 
@@ -41,7 +41,7 @@ static char		*build_line(t_env *env)
 	return (ft_strsub(env->datas, env->start + 1, env->end - env->start - 1));
 }
 
-static int		add_datas(char *datas, t_env *env)
+static int		add_datas(char *datas, t_gnl *env)
 {
 	int		i;
 
@@ -59,7 +59,7 @@ static int		add_datas(char *datas, t_env *env)
 	return (0);
 }
 
-static char		*get_n_line(t_env *env)
+static char		*get_n_line(t_gnl *env)
 {
 	int		datas_read;
 	char	buffer[BUFF_SIZE + 1];
@@ -85,13 +85,14 @@ static char		*get_n_line(t_env *env)
 
 int				get_next_line(const int fd, char **line)
 {
-	static t_env		*env;
+	static t_gnl		*env;
 
 	if (!env)
 	{
 		if (!(env = malloc(sizeof(*env))))
 			return (-1);
-		env->datas = malloc(1);
+		if (!(env->datas = malloc(1)))
+			return (-1);
 		env->buff_len = 0;
 		env->buff_pos = 0;
 		env->line = -2;

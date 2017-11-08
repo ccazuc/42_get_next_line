@@ -6,7 +6,7 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:46:08 by ccazuc            #+#    #+#             */
-/*   Updated: 2017/11/08 13:53:04 by ccazuc           ###   ########.fr       */
+/*   Updated: 2017/11/08 14:08:15 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 
 int				get_next_line(const int fd, char **line);
 
-typedef struct 	s_env
+typedef struct 	s_gnl
 {
 	char		*datas;
 	int			start;
@@ -32,6 +32,6 @@ typedef struct 	s_env
 	int			curr_line;
 	int			buff_pos;
 	int			buff_len;
-}				t_env;
+}				t_gnl;
 
 #endif
