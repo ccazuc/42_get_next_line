@@ -6,7 +6,7 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:17:41 by ccazuc            #+#    #+#             */
-/*   Updated: 2017/11/08 14:08:35 by ccazuc           ###   ########.fr       */
+/*   Updated: 2017/11/09 15:02:01 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,25 +95,28 @@ int				get_next_line(const int fd, char **line)
 			return (-1);
 		env->buff_len = 0;
 		env->buff_pos = 0;
-		env->line = -2;
+		env->line = -1;
 	}
 	++env->line;
 	env->fd = fd;
 	env->start = -1;
 	env->end = -1;
 	if (!(*line = get_n_line(env)))
+	{
+		printf("line: %s\n", *line);
 		return (-1);
+	}
 	return (1);
 }
 
-int				main(void)
+int				main(int argc, char **argv)
 {
 	char	*line;
 	int		fd;
 
-	fd = open("get_next_line.c", O_RDONLY);
-	printf("return: %d\n", get_next_line(fd, &line));
-	while (get_next_line(fd, &line) == 1)
-		printf("%s\n", line);
+	fd = open(argv[1], O_RDONLY);
+	//printf("return: %d\n", get_next_line(fd, &line));
+	get_next_line(fd, &line);
+	printf("last: %s\n", line);
 	return (0);
 }
