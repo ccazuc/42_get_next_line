@@ -6,7 +6,7 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:17:41 by ccazuc            #+#    #+#             */
-/*   Updated: 2018/03/22 15:29:17 by ccazuc           ###   ########.fr       */
+/*   Updated: 2018/03/22 16:21:52 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,45 +18,26 @@ static char		*build_line(t_gnl *env)
 
 	i = -1;
 	env->curr_line = 0;
-	while (env->datas[++i])
+	while (env->datas[++i] && env->end != i)
 		if (env->datas[i] == '\n')
 		{
 			++env->curr_line;
 			if (env->curr_line == env->line)
 				env->start = i;
 			else if (env->curr_line == env->line + 1)
-			{
 				env->end = i;
-				break ;
-			}
 		}
-	//printf("a, datas: %s, start: %d\n", env->datas, env->start);
-	if (env->curr_line <= env->line)
+	if (env->curr_line <= env->line || env->end == -1)
 	{
-		//printf("BUUUG\n");
 		env->eof = 1;
-		i = ft_strlen(env->datas);
 		while (i >= 0 && env->datas[i] != '\n')
 			--i;
-		if (i == (int)ft_strlen(env->datas) - 1)
-			return (NULL);
-		return (ft_strsub_start(env->datas, i + 1));
+		return (i == (int)ft_strlen(env->datas) - 1 ? NULL :
+		ft_strsub_start(env->datas, i + 1));
 	}
 	env->buff_pos = i + 1;
-	//printf("b\n");
-	if (env->end == -1)
-	{	
-		env->eof = 1;
-		i = ft_strlen(env->datas);
-		while (i >= 0 && env->datas[i] != '\n')
-			--i;
-		//printf("BUUUGv2\n");
-		return (ft_strsub_start(env->datas, i + 1));
-	}
-	//printf("c\n");
 	if (env->start == -1)
 		return (ft_strsub(env->datas, 0, env->end));
-	//printf("d\n");
 	return (ft_strsub(env->datas, env->start + 1, env->end - env->start - 1));
 }
 
@@ -101,7 +82,6 @@ static char		*get_n_line(t_gnl *env)
 	}
 	if (datas_read == -1)
 		return (NULL);
-	//printf("empty\n");
 	return (build_line(env));
 }
 
@@ -110,7 +90,7 @@ t_gnl			*init_env(void)
 	t_gnl	*env;
 
 	if (!(env = malloc(sizeof(*env))))
-			return (NULL);
+		return (NULL);
 	if (!(env->datas = malloc(1)))
 		return (NULL);
 	env->datas[0] = '\0';
@@ -134,17 +114,27 @@ int				get_next_line(const int fd, char **line)
 	env->start = -1;
 	env->end = -1;
 	if (!(*line = get_n_line(env)))
-		return (0);
+		return (-1);
 	return (1);
 }
 
 /*int		main(void)
 {
 	char	*line;
-	int	fd = open("gnl1_1.txt", O_RDONLY);
+	int		out;
+	int		p[2];
+	int		fd;
 
-	printf("%d, line: '%s'\n\n\n\n", get_next_line(fd, &line), line);
-	printf("%d, line: '%s'\n\n\n\n", get_next_line(fd, &line), line);
-	printf("%d, line: '%s'\n\n\n\n", get_next_line(fd, &line), line);
-	printf("%d, line: '%s'\n\n\n\n", get_next_line(fd, &line), line);
+	out = dup(1);
+	pipe(p);
+
+	fd = 1;
+	dup2(p[1], fd);
+	write(fd, "efghijkl", 8);
+	close(p[1]);
+	dup2(out, fd);
+	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
+	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
+	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
+	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
 }*/
