@@ -1,38 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.h                                    :+:      :+:    :+:   */
+/*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/11/08 09:46:08 by ccazuc            #+#    #+#             */
-/*   Updated: 2018/03/22 14:52:01 by ccazuc           ###   ########.fr       */
+/*   Created: 2017/11/07 05:51:21 by ccazuc            #+#    #+#             */
+/*   Updated: 2017/11/15 07:24:43 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef GET_NEXT_LINE_H
-# define GET_NEXT_LINE_H
+#include "libft.h"
 
-# define BUFF_SIZE 8
-
-# include "libft/libft.h"
-# include <unistd.h>
-# include <stdlib.h>
-# include <fcntl.h>
-
-int				get_next_line(const int fd, char **line);
-
-typedef struct 	s_gnl
+void	*ft_memmove(void *dest, const void *src, size_t n)
 {
-	char		*datas;
-	int			start;
-	int			end;
-	int			fd;
-	int			line;
-	int			curr_line;
-	int			buff_pos;
-	int			buff_len;
-	int			eof;
-}				t_gnl;
+	size_t	i;
 
-#endif
+	i = -1;
+	if (n > 0 && dest < src)
+		while (++i < n)
+			((unsigned char*)dest)[i] = ((unsigned char*)src)[i];
+	else if (n > 0)
+	{
+		i = n + 3;
+		while (--i > 0)
+			((unsigned char*)dest)[i - 1] = ((unsigned char*)src)[i - 1];
+		((unsigned char*)dest)[n] = '\0';
+	}
+	return (dest);
+}
