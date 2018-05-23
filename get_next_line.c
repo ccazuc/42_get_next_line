@@ -6,7 +6,7 @@
 /*   By: ccazuc <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/11/08 09:17:41 by ccazuc            #+#    #+#             */
-/*   Updated: 2018/03/22 16:21:52 by ccazuc           ###   ########.fr       */
+/*   Updated: 2018/04/30 13:49:43 by ccazuc           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,9 +118,9 @@ int				get_next_line(const int fd, char **line)
 	return (1);
 }
 
-/*int		main(void)
+int		main(int argc, char **argv)
 {
-	char	*line;
+	/*char	*line;
 	int		out;
 	int		p[2];
 	int		fd;
@@ -136,5 +136,19 @@ int				get_next_line(const int fd, char **line)
 	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
 	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
 	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
-	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
-}*/
+	printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);*/
+	
+	char	*line;
+	int		fd;
+	int		i;
+	int		max;
+	int		returned_value;
+
+	i = -1;
+	fd = open(argv[1], O_RDONLY);
+	max = ft_atoi(argv[2]);
+	while (++i < max && (returned_value = get_next_line(fd, &line)) == 1)
+		printf("'%d' '%s'\n", returned_value, line);
+	printf("last: %d\n", get_next_line(fd, &line));
+	return (0);
+}
