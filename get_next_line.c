@@ -83,7 +83,10 @@ static char		*get_n_line(t_gnl *env)
 	}
 	env->eof = 1;
 	if (datas_read == -1)
+	{
+		env->eof = 0;
 		return (NULL);
+	}
 	return (build_line(env));
 }
 
@@ -107,7 +110,7 @@ int				get_next_line(const int fd, char **line)
 {
 	static t_gnl		*env;
 
-	if (fd < 0 || fd > 255 || (!env && (!(env = init_env()))))
+	if (fd < 0 || fd > 255 || !line || (!env && (!(env = init_env()))))
 		return (-1);
 	if (env->eof)
 	{
@@ -134,6 +137,7 @@ int				get_next_line(const int fd, char **line)
 
 int		main(int argc, char **argv)
 {
+
 /*	char	*line;
 	int		out;
 	int		p[2];
@@ -144,7 +148,7 @@ int		main(int argc, char **argv)
 
 	fd = 1;
 	dup2(p[1], fd);
-	write(fd, "efghijklabcde", 13);
+	write(fd, "efghijk\nlabcde\n", 15);
 	close(p[1]);
 	dup2(out, fd);
 	int returned = get_next_line(p[0], &line);
@@ -156,29 +160,35 @@ int		main(int argc, char **argv)
 
 }*/
 
-/*	char	*line;
+	char	*line;
 	int		fds[2];
 
 	pipe(fds);
 	dup2(fds[0], 1);
-	write(fds[1], "salut\n", 6);
+	write(fds[1], "sa\nlut\n", 7);
 	close(fds[1]);
 	int returned = get_next_line(1, &line);
 	dprintf(2, "ret: %d, line: %s\n", returned, line);
 	returned = get_next_line(1, &line);
 	dprintf(2, "ret: %d, line: %s\n", returned, line);
+	returned = get_next_line(1, &line);
+	dprintf(2, "ret: %d, line: %s\n", returned, line);
+
 	dprintf(2, "\n");
 
 	pipe(fds);
 	dup2(fds[0], 1);
-	write(fds[1], "salut\n", 6);
+	write(fds[1], "sa\nlut\n", 7);
 	close(fds[1]);
 	returned = get_next_line(1, &line);
 	dprintf(2, "ret: %d, line: %s\n", returned, line);
 	returned = get_next_line(1, &line);
 	dprintf(2, "ret: %d, line: %s\n", returned, line);
+	returned = get_next_line(1, &line);
+	dprintf(2, "ret: %d, line: %s\n", returned, line);
+
 	dprintf(2, "\n");
-}*/
+}
 
 
 /*	char	*line;
