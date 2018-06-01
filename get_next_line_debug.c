@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "get_next_line.h"
-#include <stdio.h>
 
 static char		*build_line(t_gnl *env)
 {
@@ -28,17 +27,22 @@ static char		*build_line(t_gnl *env)
 			else if (env->curr_line == env->line + 1)
 				env->end = i;
 		}
+	printf("a\n");
 	if (env->curr_line <= env->line || env->end == -1)
 	{
 		env->eof = 1;
 		while (i >= 0 && env->datas[i] != '\n')
 			--i;
+		printf("i: %d, strlen: %d, datas: '%s', ft_strsub: '%s'\n", i, ft_strlen(env->datas), env->datas, ft_strsub_start(env->datas, i + 1));
+		printf("2: '%s'\n", i == (int)ft_strlen(env->datas) - 1 ? NULL : ft_strsub_start(env->datas, i + 1));
 		return (i == (int)ft_strlen(env->datas) - 1 ? NULL :
 		ft_strsub_start(env->datas, i + 1));
 	}
+	printf("b\n");
 	env->buff_pos = i + 1;
 	if (env->start == -1)
 		return (ft_strsub(env->datas, 0, env->end));
+	printf("c\n");
 	return (ft_strsub(env->datas, env->start + 1, env->end - env->start - 1));
 }
 
@@ -81,9 +85,11 @@ static char		*get_n_line(t_gnl *env)
 		if (returned_value == 1)
 			return (build_line(env));
 	}
+	printf("A\n");
 	env->eof = 1;
 	if (datas_read == -1)
 		return (NULL);
+	printf("B: '%s'\n", build_line(env));
 	return (build_line(env));
 }
 
@@ -116,8 +122,14 @@ int				get_next_line(const int fd, char **line)
 	env->start = -1;
 	env->end = -1;
 	if (!(*line = get_n_line(env)))
-		return (env->eof ? 0 : -1);
-	return (1);
+		return (-1);
+	printf("final: '%s'\n", *line);
+	return (env->eof ? 0 : 1);
+}
+
+void	ft_putstre(int fd, char *str)
+{
+	write(fd, str, ft_strlen(str));
 }
 
 int		main(int argc, char **argv)
@@ -132,19 +144,27 @@ int		main(int argc, char **argv)
 
 	fd = 1;
 	dup2(p[1], fd);
-	write(fd, "efghijklabcde", 13);
+	//write(fd, "efghijkl\na", 8);
+	ft_putstre(fd, "abcd");
 	close(p[1]);
 	dup2(out, fd);
-	int returned = get_next_line(p[0], &line);
-	printf("%d, line: '%s'\n\n\n\n", returned, line);
-	returned = get_next_line(p[0], &line);
-	printf("%d, line: '%s'\n\n\n\n", returned, line);
-	returned = get_next_line(p[0], &line);
-	printf("%d, line: '%s'\n\n\n\n", returned, line);
-
-}*/
-
-	char	*line;
+	int i = 0;
+	get_next_line(p[0], &line);
+	printf("line: '%s'\n", line);
+	printf("cmp: %d\n", ft_strcmp(line, "abcd"));*/
+	/*while (++i < 5)
+	{
+		int value = get_next_line(p[0], &line);
+		printf("\n-----------------------------------------\n");
+		printf("%d, line: '%s'\n", value, line);
+		printf("-----------------------------------------\n\n\n\n");
+	}*/
+	//printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
+	//printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
+	//printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
+	//printf("%d, line: '%s'\n\n\n\n", get_next_line(p[0], &line), line);
+	
+	/*char	*line;
 	int		fd;
 	int		i;
 	int		max;
@@ -155,7 +175,22 @@ int		main(int argc, char **argv)
 	max = ft_atoi(argv[2]);
 	while (++i < max && (returned_value = get_next_line(fd, &line)) == 1)
 		printf("'%d' '%s'\n", returned_value, line);
-	returned_value = get_next_line(fd, &line);
-	printf("last: %d\n", returned_value);
+	printf("last: %d\n", get_next_line(fd, &line));*/
+
+	char	*line;
+	int		out;
+	int		p[2];
+	int		fd;
+
+	out = dup(1);
+	pipe(p);
+
+	fd = 1;
+	dup2(p[1], fd);
+	ft_putstre(fd, "abcd");
+	close(p[1]);
+	dup2(out, fd);
+	printf("returned value: %d\n", get_next_line(p[0], &line));
+	printf("res: %d\n", ft_strcmp(line, "abcd"));
 	return (0);
 }

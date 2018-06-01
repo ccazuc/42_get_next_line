@@ -41,9 +41,7 @@ static int		ft_get_ini_pos(const char *str)
 static int		get_end_pos(int i, const char *str)
 {
 	char	tmp;
-	int		start;
 
-	start = i;
 	while (str[++i])
 	{
 		tmp = str[i];
