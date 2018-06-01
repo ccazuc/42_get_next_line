@@ -110,13 +110,25 @@ int				get_next_line(const int fd, char **line)
 	if (fd < 0 || fd > 255 || (!env && (!(env = init_env()))))
 		return (-1);
 	if (env->eof)
+	{
+		free(env);
+		env = NULL;
 		return (0);
+	}
 	++env->line;
 	env->fd = fd;
 	env->start = -1;
 	env->end = -1;
 	if (!(*line = get_n_line(env)))
-		return (env->eof ? 0 : -1);
+	{
+		if (env->eof)
+		{
+			free(env);
+			env = NULL;
+			return (0);
+		}
+		return (-1);
+	}
 	return (1);
 }
 
@@ -144,7 +156,32 @@ int		main(int argc, char **argv)
 
 }*/
 
-	char	*line;
+/*	char	*line;
+	int		fds[2];
+
+	pipe(fds);
+	dup2(fds[0], 1);
+	write(fds[1], "salut\n", 6);
+	close(fds[1]);
+	int returned = get_next_line(1, &line);
+	dprintf(2, "ret: %d, line: %s\n", returned, line);
+	returned = get_next_line(1, &line);
+	dprintf(2, "ret: %d, line: %s\n", returned, line);
+	dprintf(2, "\n");
+
+	pipe(fds);
+	dup2(fds[0], 1);
+	write(fds[1], "salut\n", 6);
+	close(fds[1]);
+	returned = get_next_line(1, &line);
+	dprintf(2, "ret: %d, line: %s\n", returned, line);
+	returned = get_next_line(1, &line);
+	dprintf(2, "ret: %d, line: %s\n", returned, line);
+	dprintf(2, "\n");
+}*/
+
+
+/*	char	*line;
 	int		fd;
 	int		i;
 	int		max;
@@ -158,4 +195,4 @@ int		main(int argc, char **argv)
 	returned_value = get_next_line(fd, &line);
 	printf("last: %d\n", returned_value);
 	return (0);
-}
+}*/
