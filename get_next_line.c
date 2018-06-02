@@ -84,6 +84,7 @@ t_gnl	*init_env(t_gnl **env_p, char should_delete)
 	env->line = -1;
 	env->eof = 0;
 	env->buff_pos = 0;
+	env->buff_len = 0;
 	return (env);
 }
 
@@ -109,7 +110,7 @@ int		get_next_line(const int fd, char **line)
 	
 }
 
-/*int		main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	char	*line;
 	int		fd;
@@ -128,4 +129,4 @@ int		get_next_line(const int fd, char **line)
 	returned = get_next_line(fd, &line);
 	printf("last: %d\n", returned);
 	return (0);
-}*/
+}
