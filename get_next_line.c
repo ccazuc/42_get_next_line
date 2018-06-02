@@ -28,17 +28,35 @@ static char		*build_line(t_gnl *env)
 			else if (env->curr_line == env->line + 1)
 				env->end = i;
 		}
+	//printf("a\n");
+	//printf("i: %d, env: %d\n", i, env->end);
+	i = i;
 	if (env->curr_line <= env->line || env->end == -1)
 	{
 		env->eof = 1;
+	//	printf("i before: %d\n", i);
+		i = i;
+		//i = i - 2;
+		//printf("i after: %d\n", i);
 		while (i >= 0 && env->datas[i] != '\n')
 			--i;
+		//printf("A\n");
 		return (i == (int)ft_strlen(env->datas) - 1 ? NULL :
 		ft_strsub_start(env->datas, i + 1));
 	}
-	env->buff_pos = env->end + 1;	
+	//printf("b\n");
+	//printf("i: %d, env: %d\n", i, env->end);
+	i = i;
+	env->buff_pos = i + 1;
 	if (env->start == -1)
+	{
+		//env->buff_pos = env->end + 1;
 		return (ft_strsub(env->datas, 0, env->end));
+	}
+	//printf("c\n");
+	env->buff_pos = i + 1;
+	//printf("i: %d, env: %d\n", i, env->end);
+	i = i;
 	return (ft_strsub(env->datas, env->start + 1, env->end - env->start - 1));
 }
 
@@ -102,6 +120,7 @@ t_gnl			*init_env(t_gnl **env_param, char shouldDelete)
 			*env_param = NULL;
 			return (NULL);
 		}
+		return (env);
 	}
 	if (!(env = malloc(sizeof(*env))))
 		return (NULL);
@@ -143,8 +162,8 @@ void	mdr(int fd, char *str)
 	write(fd, str, ft_strlen(str));
 }
 
-//int		main(int argc, char **argv)
-//{
+int		main(int argc, char **argv)
+{
 
 /*	char	*line;
 	int		out;
@@ -222,7 +241,9 @@ void	mdr(int fd, char *str)
 	printf("line: '%s'\n\n\n gnl: '%s'\n\n\ncmp: %d, return: %d\n", str, line, ft_strcmp(line, str), gnl_ret);
 
 }*/
-/*	char	*line;
+
+
+	char	*line;
 	int		fd;
 	int		i;
 	int		max;
@@ -232,8 +253,16 @@ void	mdr(int fd, char *str)
 	fd = open(argv[1], O_RDONLY);
 	max = ft_atoi(argv[2]);
 	while (++i < max && (returned_value = get_next_line(fd, &line)) == 1)
+	{
 		printf("'%d' '%s'\n", returned_value, line);
+		free(line);
+	}
 	returned_value = get_next_line(fd, &line);
 	printf("last: %d\n", returned_value);
+	//printf("GNL: %d, '%s'\n", get_next_line(fd, &line), line);
+	//printf("GNL: %d, '%s'\n", get_next_line(fd, &line), line);
+	//printf("GNL: %d, '%s'\n", get_next_line(fd, &line), line);
+	//printf("GNL: %d, '%s'\n", get_next_line(fd, &line), line);
+	//printf("GNL: %d, '%s'\n", get_next_line(fd, &line), line);
 	return (0);
-}*/
+}
