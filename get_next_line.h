@@ -33,6 +33,7 @@ typedef struct 	s_gnl
 	int			buff_pos;
 	int			buff_len;
 	int			eof;
+	int			exception;
 }				t_gnl;
 
 #endif
