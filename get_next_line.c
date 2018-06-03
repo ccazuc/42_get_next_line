@@ -61,6 +61,8 @@ t_gnl	*init_env(t_gnl **env_p, char should_delete)
 	{
 		if ((*env_p)->eof)
 		{
+			printf("datas: %s\n", env->datas);
+			free(env->datas);
 			free(*env_p);
 			*env_p = NULL;
 			return (NULL);
@@ -108,7 +110,7 @@ int		get_next_line(const int fd, char **line)
 	
 }
 
-/*int		main(int argc, char **argv)
+int		main(int argc, char **argv)
 {
 	char	*line;
 	int		fd;
@@ -126,5 +128,6 @@ int		get_next_line(const int fd, char **line)
 	}
 	returned = get_next_line(fd, &line);
 	printf("last: %d\n", returned);
+	while (1);
 	return (0);
-}*/
+}
