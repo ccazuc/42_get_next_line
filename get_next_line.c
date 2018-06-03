@@ -61,8 +61,8 @@ t_gnl	*init_env(t_gnl **env_p, char should_delete)
 	{
 		if ((*env_p)->eof)
 		{
-			printf("datas: %s\n", env->datas);
-			free(env->datas);
+//			printf("datas: %s\n", env_p->datas);
+			free((*env_p)->datas);
 			free(*env_p);
 			*env_p = NULL;
 			return (NULL);
